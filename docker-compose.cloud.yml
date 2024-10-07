@@ -1,0 +1,31 @@
+services:
+  app:
+    user: "0:0"
+    image: etherpad/etherpad:latest
+    tty: true
+    stdin_open: true
+    volumes:
+      - plugins:/opt/etherpad-lite/src/plugin_packages
+      - etherpad-var:/opt/etherpad-lite/var
+    environment:
+      NODE_ENV: production
+      ADMIN_PASSWORD: ${DOCKER_COMPOSE_APP_ADMIN_PASSWORD:-admin}
+      DB_CHARSET: ${DOCKER_COMPOSE_APP_DB_CHARSET:-utf8mb4}
+      DB_HOST: 34.124.196.15
+      DB_NAME: etherpad
+      DB_USER: postgres
+      DB_PASS: admin
+      DB_PORT: ${DOCKER_COMPOSE_POSTGRES_PORT:-5432}
+      DB_TYPE: "postgres"
+      # For now, the env var DEFAULT_PAD_TEXT cannot be unset or empty; it seems to be mandatory in the latest version of etherpad
+      DEFAULT_PAD_TEXT: ${DOCKER_COMPOSE_APP_DEFAULT_PAD_TEXT:- }
+      DISABLE_IP_LOGGING: ${DOCKER_COMPOSE_APP_DISABLE_IP_LOGGING:-false}
+      SOFFICE: ${DOCKER_COMPOSE_APP_SOFFICE:-null}
+      TRUST_PROXY: ${DOCKER_COMPOSE_APP_TRUST_PROXY:-true}
+    restart: always
+    ports:
+      - "${DOCKER_COMPOSE_APP_PORT_PUBLISHED:-9001}:${DOCKER_COMPOSE_APP_PORT_TARGET:-9001}"
+
+volumes:
+  plugins:
+  etherpad-var:
